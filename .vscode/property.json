@@ -1,0 +1,11 @@
+{
+	"toolChain": "xilinx",
+	"prjName": {
+		"PL": "QianTang_Processors"
+	},
+	"soc": {
+		"core": "none"
+	},
+	"enableShowLog": false,
+	"device": "xc7z020clg400-2"
+}
