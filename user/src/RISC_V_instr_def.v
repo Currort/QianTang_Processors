@@ -1,0 +1,6 @@
+`define R_TYPE 7'b0110011
+`define I_TYPE 7'b0000011
+`define S_TYPE 7'b0100011
+`define U_TYPE 7'b0110111
+`define B_TYPE 7'b1100111
+`define J_TYPE 7'b1101111
