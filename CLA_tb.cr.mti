@@ -1,0 +1,102 @@
+E:/Linux_share/QianTang_Processors/user/src/CLU.v {2 {vlog -work work -vopt -stats=none E:/Linux_share/QianTang_Processors/user/src/CLU.v
+** Warning: (vlog-14) Failed to open "E:/Linux_share/QianTang_Processors/CLA_tb.mpf" specified by the MODELSIM environment variable.
+No such file or directory. (errno = ENOENT)
+Model Technology ModelSim SE-64 vlog 10.7 Compiler 2017.12 Dec  7 2017
+-- Compiling module CLU
+
+Top level modules:
+	CLU
+
+} {} {}} E:/Linux_share/QianTang_Processors/user/sim/testbench.v {2 {vlog -work work -vopt -stats=none E:/Linux_share/QianTang_Processors/user/sim/testbench.v
+** Warning: (vlog-14) Failed to open "E:/Linux_share/QianTang_Processors/CLA_tb.mpf" specified by the MODELSIM environment variable.
+No such file or directory. (errno = ENOENT)
+Model Technology ModelSim SE-64 vlog 10.7 Compiler 2017.12 Dec  7 2017
+-- Compiling module testbench
+
+Top level modules:
+	testbench
+
+} {} {}} E:/Linux_share/QianTang_Processors/user/src/CLA_64_32.v {2 {vlog -work work -vopt -stats=none E:/Linux_share/QianTang_Processors/user/src/CLA_64_32.v
+** Warning: (vlog-14) Failed to open "E:/Linux_share/QianTang_Processors/CLA_tb.mpf" specified by the MODELSIM environment variable.
+No such file or directory. (errno = ENOENT)
+Model Technology ModelSim SE-64 vlog 10.7 Compiler 2017.12 Dec  7 2017
+-- Compiling module CLA_64_32
+
+Top level modules:
+	CLA_64_32
+
+} {} {}} E:/Linux_share/QianTang_Processors/user/src/ID.v {0 {vlog -work work -vopt -stats=none E:/Linux_share/QianTang_Processors/user/src/ID.v
+** Warning: (vlog-14) Failed to open "E:/Linux_share/QianTang_Processors/CLA_tb.mpf" specified by the MODELSIM environment variable.
+No such file or directory. (errno = ENOENT)
+Model Technology ModelSim SE-64 vlog 10.7 Compiler 2017.12 Dec  7 2017
+** Error: E:/Linux_share/QianTang_Processors/user/src/ID.v(5): Cannot find `include file "64_32_switch.v" in directories:
+    E:/Modelsim/ovm-2.1.2/../verilog_src/ovm-2.1.2/src, E:/Modelsim/uvm-1.1d/../verilog_src/uvm-1.1d/src
+-- Compiling module ID
+** Error: E:/Linux_share/QianTang_Processors/user/src/ID.v(38): (vlog-2730) Undefined variable: 'R_TYPE'.
+** Error: E:/Linux_share/QianTang_Processors/user/src/ID.v(44): (vlog-2730) Undefined variable: 'I_TYPE'.
+** Error: E:/Linux_share/QianTang_Processors/user/src/ID.v(50): (vlog-2730) Undefined variable: 'S_TYPE'.
+** Error: E:/Linux_share/QianTang_Processors/user/src/ID.v(55): (vlog-2730) Undefined variable: 'B_TYPE'.
+** Error: E:/Linux_share/QianTang_Processors/user/src/ID.v(60): (vlog-2730) Undefined variable: 'U_TYPE'.
+** Error: E:/Linux_share/QianTang_Processors/user/src/ID.v(64): (vlog-2730) Undefined variable: 'J_TYPE'.
+
+} {5.0 6.0 8.0 14.0} {}} E:/Linux_share/QianTang_Processors/user/src/CLA_16.v {2 {vlog -work work -vopt -stats=none E:/Linux_share/QianTang_Processors/user/src/CLA_16.v
+** Warning: (vlog-14) Failed to open "E:/Linux_share/QianTang_Processors/CLA_tb.mpf" specified by the MODELSIM environment variable.
+No such file or directory. (errno = ENOENT)
+Model Technology ModelSim SE-64 vlog 10.7 Compiler 2017.12 Dec  7 2017
+-- Compiling module CLA_16
+
+Top level modules:
+	CLA_16
+
+} {} {}} E:/Linux_share/QianTang_Processors/user/src/ALU.v {0 {vlog -work work -vopt -stats=none E:/Linux_share/QianTang_Processors/user/src/ALU.v
+** Warning: (vlog-14) Failed to open "E:/Linux_share/QianTang_Processors/CLA_tb.mpf" specified by the MODELSIM environment variable.
+No such file or directory. (errno = ENOENT)
+Model Technology ModelSim SE-64 vlog 10.7 Compiler 2017.12 Dec  7 2017
+-- Compiling module ALU
+** Error: E:/Linux_share/QianTang_Processors/user/src/ALU.v(20): (vlog-2730) Undefined variable: 'ADD'.
+** Error: E:/Linux_share/QianTang_Processors/user/src/ALU.v(22): (vlog-2730) Undefined variable: 'rst1_'.
+** Error: (vlog-13069) E:/Linux_share/QianTang_Processors/user/src/ALU.v(23): near "end": syntax error, unexpected end, expecting ';'.
+
+} {6.0 9.0} {}} E:/Linux_share/QianTang_Processors/user/src/IM.v {0 {vlog -work work -vopt -stats=none E:/Linux_share/QianTang_Processors/user/src/IM.v
+** Warning: (vlog-14) Failed to open "E:/Linux_share/QianTang_Processors/CLA_tb.mpf" specified by the MODELSIM environment variable.
+No such file or directory. (errno = ENOENT)
+Model Technology ModelSim SE-64 vlog 10.7 Compiler 2017.12 Dec  7 2017
+-- Compiling module IM
+** Error: E:/Linux_share/QianTang_Processors/user/src/IM.v(11): (vlog-2110) Illegal reference to net "instr_o".
+** Error: E:/Linux_share/QianTang_Processors/user/src/IM.v(12): (vlog-2110) Illegal reference to net "instr_o".
+** Error: E:/Linux_share/QianTang_Processors/user/src/IM.v(13): (vlog-2110) Illegal reference to net "instr_o".
+** Error: E:/Linux_share/QianTang_Processors/user/src/IM.v(14): (vlog-2110) Illegal reference to net "instr_o".
+
+} {6.0 10.0} {}} E:/Linux_share/QianTang_Processors/user/src/RegFile.v {2 {vlog -work work -vopt -stats=none E:/Linux_share/QianTang_Processors/user/src/RegFile.v
+** Warning: (vlog-14) Failed to open "E:/Linux_share/QianTang_Processors/CLA_tb.mpf" specified by the MODELSIM environment variable.
+No such file or directory. (errno = ENOENT)
+Model Technology ModelSim SE-64 vlog 10.7 Compiler 2017.12 Dec  7 2017
+-- Compiling module RegFile
+
+Top level modules:
+	RegFile
+
+} {} {}} E:/Linux_share/QianTang_Processors/user/src/RISC_V_instr_def.v {2 {vlog -work work -vopt -stats=none E:/Linux_share/QianTang_Processors/user/src/RISC_V_instr_def.v
+** Warning: (vlog-14) Failed to open "E:/Linux_share/QianTang_Processors/CLA_tb.mpf" specified by the MODELSIM environment variable.
+No such file or directory. (errno = ENOENT)
+Model Technology ModelSim SE-64 vlog 10.7 Compiler 2017.12 Dec  7 2017
+
+} {} {}} E:/Linux_share/QianTang_Processors/user/src/PC.v {2 {vlog -work work -vopt -stats=none E:/Linux_share/QianTang_Processors/user/src/PC.v
+** Warning: (vlog-14) Failed to open "E:/Linux_share/QianTang_Processors/CLA_tb.mpf" specified by the MODELSIM environment variable.
+No such file or directory. (errno = ENOENT)
+Model Technology ModelSim SE-64 vlog 10.7 Compiler 2017.12 Dec  7 2017
+-- Compiling module PC
+
+Top level modules:
+	PC
+
+} {} {}} E:/Linux_share/QianTang_Processors/user/src/CLA_4.v {2 {vlog -work work -vopt -stats=none E:/Linux_share/QianTang_Processors/user/src/CLA_4.v
+** Warning: (vlog-14) Failed to open "E:/Linux_share/QianTang_Processors/CLA_tb.mpf" specified by the MODELSIM environment variable.
+No such file or directory. (errno = ENOENT)
+Model Technology ModelSim SE-64 vlog 10.7 Compiler 2017.12 Dec  7 2017
+-- Compiling module CLA_4
+
+Top level modules:
+	CLA_4
+
+} {} {}}

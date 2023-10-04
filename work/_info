@@ -1,0 +1,193 @@
+m255
+K4
+z2
+13
+!s112 1.1
+!i10d 8192
+!i10e 25
+!i10f 100
+cModel Technology
+Z0 dE:/Linux_share/QianTang_Processors
+T_opt
+!s110 1695216180
+VA9;VI`mK;]7DFjeX^YPI`0
+04 9 4 work testbench fast 0
+=3-7c10c99144cd-650af234-6b-25b10
+Z1 o-quiet -auto_acc_if_foreign -work work
+Z2 tCvgOpt 0
+n@_opt
+Z3 OL;O;10.7;67
+R0
+T_opt1
+!s110 1695202276
+VLFCID6=z^Q3f2<ZB;XIP21
+04 6 4 work CLA_16 fast 0
+=3-7c10c99144cd-650abbe4-1c4-9eac
+R1
+R2
+n@_opt1
+R3
+R0
+T_opt2
+!s110 1695215502
+VFg:EY`Cd40IY:bXa@Y`BT1
+04 9 4 work CLA_64_32 fast 0
+=3-7c10c99144cd-650aef8e-c9-24b60
+R1
+R2
+n@_opt2
+R3
+R0
+vCLA_16
+Z4 !s110 1695214947
+!i10b 1
+!s100 R=C4[V8jAzIZL4P6k;D:g1
+IbV9HMhSGn_5]1>8boK[551
+Z5 VDg1SIo80bB@j0V0VzS_@n1
+R0
+w1695214058
+8E:/Linux_share/QianTang_Processors/user/src/CLA_16.v
+FE:/Linux_share/QianTang_Processors/user/src/CLA_16.v
+L0 2
+Z6 OL;L;10.7;67
+r1
+!s85 0
+31
+Z7 !s108 1695214947.000000
+!s107 E:/Linux_share/QianTang_Processors/user/src/CLA_16.v|
+!s90 -reportprogress|300|-work|work|-vopt|-stats=none|E:/Linux_share/QianTang_Processors/user/src/CLA_16.v|
+!i113 0
+Z8 o-work work -L mtiAvm -L mtiRnm -L mtiOvm -L mtiUvm -L mtiUPF -L infact
+R2
+n@c@l@a_16
+vCLA_4
+R4
+!i10b 1
+!s100 m75AT<LB[JG7c_8TXgofY0
+I:n7]AzkZcZn[`]WU25O2Q3
+R5
+R0
+w1695200382
+8E:/Linux_share/QianTang_Processors/user/src/CLA_4.v
+FE:/Linux_share/QianTang_Processors/user/src/CLA_4.v
+L0 3
+R6
+r1
+!s85 0
+31
+R7
+!s107 E:/Linux_share/QianTang_Processors/user/src/CLA_4.v|
+!s90 -reportprogress|300|-work|work|-vopt|-stats=none|E:/Linux_share/QianTang_Processors/user/src/CLA_4.v|
+!i113 0
+R8
+R2
+n@c@l@a_4
+vCLA_64_32
+!s110 1695215483
+!i10b 1
+!s100 ;gVZjglETMzDJHmI[?8Jh2
+I@g@6kBE_2^dGYJ[:IzE<m2
+R5
+R0
+w1695215478
+8E:/Linux_share/QianTang_Processors/user/src/CLA_64_32.v
+FE:/Linux_share/QianTang_Processors/user/src/CLA_64_32.v
+L0 3
+R6
+r1
+!s85 0
+31
+!s108 1695215483.000000
+!s107 E:\Linux_share\QianTang_Processors\user\src\RISC_V_instr_def.v|E:/Linux_share/QianTang_Processors/user/src/CLA_64_32.v|
+!s90 -reportprogress|300|-work|work|-vopt|-stats=none|E:/Linux_share/QianTang_Processors/user/src/CLA_64_32.v|
+!i113 0
+R8
+R2
+n@c@l@a_64_32
+vCLU
+R4
+!i10b 1
+!s100 USWJG>FmZQIfJ;3h5]NCI3
+IKIfoiBaGI=6=dKDl?YITT2
+R5
+R0
+w1695211198
+8E:/Linux_share/QianTang_Processors/user/src/CLU.v
+FE:/Linux_share/QianTang_Processors/user/src/CLU.v
+L0 6
+R6
+r1
+!s85 0
+31
+R7
+!s107 E:/Linux_share/QianTang_Processors/user/src/CLU.v|
+!s90 -reportprogress|300|-work|work|-vopt|-stats=none|E:/Linux_share/QianTang_Processors/user/src/CLU.v|
+!i113 0
+R8
+R2
+n@c@l@u
+vPC
+R4
+!i10b 1
+!s100 ^X41^PjN=>g=jAol^T`<S3
+IRT0PO6=X`Tjk0b@_9>3k<2
+R5
+R0
+w1695209558
+8E:/Linux_share/QianTang_Processors/user/src/PC.v
+FE:/Linux_share/QianTang_Processors/user/src/PC.v
+L0 3
+R6
+r1
+!s85 0
+31
+R7
+!s107 E:/Linux_share/QianTang_Processors/user/src/PC.v|
+!s90 -reportprogress|300|-work|work|-vopt|-stats=none|E:/Linux_share/QianTang_Processors/user/src/PC.v|
+!i113 0
+R8
+R2
+n@p@c
+vRegFile
+R4
+!i10b 1
+!s100 lOa4GHR>9NMAj>6aVib=D2
+I:2dF9MEaALL^dPbJ`GG]O2
+R5
+R0
+w1695214789
+8E:/Linux_share/QianTang_Processors/user/src/RegFile.v
+FE:/Linux_share/QianTang_Processors/user/src/RegFile.v
+L0 4
+R6
+r1
+!s85 0
+31
+R7
+!s107 E:\Linux_share\QianTang_Processors\user\src\RISC_V_instr_def.v|E:/Linux_share/QianTang_Processors/user/src/RegFile.v|
+!s90 -reportprogress|300|-work|work|-vopt|-stats=none|E:/Linux_share/QianTang_Processors/user/src/RegFile.v|
+!i113 0
+R8
+R2
+n@reg@file
+vtestbench
+!s110 1695216522
+!i10b 1
+!s100 h^Y4DCZ8UF3iOWF4nX:ZX3
+IZjk_91PhZo?nMoXIdgfAK2
+R5
+R0
+w1695216153
+8E:/Linux_share/QianTang_Processors/user/sim/testbench.v
+FE:/Linux_share/QianTang_Processors/user/sim/testbench.v
+L0 1
+R6
+r1
+!s85 0
+31
+!s108 1695216522.000000
+!s107 E:/Linux_share/QianTang_Processors/user/sim/testbench.v|
+!s90 -reportprogress|300|-work|work|-vopt|-stats=none|E:/Linux_share/QianTang_Processors/user/sim/testbench.v|
+!i113 0
+R8
+R2
