@@ -1,0 +1,29 @@
+#!/bin/bash
+#record the current ClipBoard
+clipboard_current=$(xclip -o)
+pid_list=`xdotool search --class "nautilus"`
+
+#loop for the right window
+for i in $pid_list
+do
+name=`xdotool getwindowname "$i"`
+name_lower=$(echo $name | tr [a-z] [A-Z])
+if echo "$name_lower" | grep -qwi ".*desktop*";then
+echo "desktop window"
+elif echo "$name_lower" | grep -qwi ".*nautilus*";then
+echo "nautilus window"
+else
+id=$i
+fi
+done
+
+#get the current working directory
+xdotool windowfocus --sync $id 
+sleep 0.15
+xdotool key --window $id Ctrl+l 
+xdotool key --window $id Ctrl+c 
+path=$(xclip -o)
+xclip -i clipboard_current
+xdotool key Escape 
+xfce4-terminal --working-directory "${path}"
+

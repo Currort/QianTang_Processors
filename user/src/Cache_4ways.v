@@ -2,7 +2,7 @@
 //! 该模块实现了一个4路组相连Cache，总容量64KB，Cache Line Size 64B，256组cache块，支持切换32/64位指令集，支持修改寻址范围
 //! 
 // 32bit addr  index 8bit offset 6bit 
-`include "RISC_V_instr_def.v"
+`include "./include/QianTang_header.v"
 
 module Cache_4ways (
     input                    clk_sys_i,

@@ -1,0 +1,19 @@
+{
+	"folders": [
+		{
+			"name": "QianTang_Processors",
+			"path": "../.."
+		},
+		{
+			"name": "Spike_difftest",
+			"path": "../../../Spike_difftest"
+		}
+	],
+	"settings": {
+		"files.associations": {
+			"*.json": "jsonc",
+			"riscv-reg.h": "c",
+			"htif.h": "c"
+		}
+	}
+}
