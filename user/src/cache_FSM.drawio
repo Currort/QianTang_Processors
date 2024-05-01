@@ -1,0 +1,16 @@
+<mxfile host="65bd71144e">
+    <diagram id="ANH7QQ4LeA3bB0F0PRzu" name="第 1 页">
+        <mxGraphModel dx="1328" dy="844" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="3" value="{&#10;    &quot;signal&quot;: [&#10;        { &quot;name&quot;: &quot;CACHE_in_i&quot;, &quot;wave&quot;: &quot;p&quot; }&#10;    ]&#10;}" style="shadow=0;dashed=0;align=left;strokeWidth=1;labelBackgroundColor=#ffffff;noLabel=1;shape=mxgraph.wavedrom.abstract.timing;" vertex="1" parent="1">
+                    <mxGeometry x="40" y="330" width="870" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="4" value="{ &quot;reg&quot;: [&#10;    { &quot;name&quot;: &quot;D&quot;, &quot;bits&quot;: 1, &quot;attr&quot;: &quot;&quot;, &quot;type&quot;:6 },&#10;    { &quot;name&quot;: &quot;L&quot;, &quot;bits&quot;: 1, &quot;attr&quot;: &quot;&quot;, &quot;type&quot;:5 },&#10;    { &quot;name&quot;: &quot;E&quot;, &quot;bits&quot;: 1, &quot;attr&quot;: &quot;&quot;, &quot;type&quot;:4 },&#10;    { &quot;name&quot;: &quot;I&quot;, &quot;bits&quot;: 1, &quot;attr&quot;: &quot;&quot;, &quot;type&quot;:3 },&#10;    { &quot;name&quot;: &quot;F&quot;, &quot;bits&quot;: 1, &quot;attr&quot;: &quot;&quot;, &quot;type&quot;:2 },&#10;    { &quot;name&quot;: &quot;T&quot;, &quot;bits&quot;: 1, &quot;attr&quot;: &quot;&quot;, &quot;type&quot;:1 },&#10;    { &quot;name&quot;: &quot;I&quot;, &quot;bits&quot;: 1, &quot;attr&quot;: &quot;&quot;, &quot;type&quot;:0 },&#10;    { &quot;name&quot;: &quot;B&quot;, &quot;bits&quot;: 1, &quot;attr&quot;: &quot;&quot; }&#10;]}" style="shadow=0;dashed=0;align=left;strokeWidth=1;labelBackgroundColor=#ffffff;noLabel=1;shape=mxgraph.wavedrom.abstract.bitfield;" vertex="1" parent="1">
+                    <mxGeometry x="290" y="130" width="300" height="75" as="geometry"/>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+</mxfile>

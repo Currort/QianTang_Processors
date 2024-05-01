@@ -7,12 +7,32 @@
 `endif
 module Multiplier
 (
+	input  clk_i,
+	input  start_i,
+	output finish_o,
     input  [`REG_WIDTH-1:0] A,
     input  [`REG_WIDTH-1:0] B,
 	input  unsign_ctrl_A_i,
 	input  unsign_ctrl_B_i,
     output [`REG_WIDTH*2-1:0] S
 );
+
+//! 模拟延迟
+	reg [1:0] cnt = 0;
+	reg flag = 0;
+	assign finish_o = (start_i & ~flag) ? 0 : (cnt == 2'b0);
+	always @( posedge clk_i) begin
+		if(start_i && ~flag)begin
+			flag <= 1;
+			cnt <= 2'b11;
+		end else if(cnt == 2'b0)begin
+			cnt <= 0;
+			flag <= 0;
+		end else begin
+			cnt <= cnt-1;
+		end
+	end
+
 
 // //! 对有符号数和无符号数统一进行符号拓展
 	wire signed  [`REG_WIDTH:0] A_sign_extend;

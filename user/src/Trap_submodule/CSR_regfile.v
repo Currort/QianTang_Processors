@@ -1,8 +1,9 @@
 `include "../include/QianTang_header.v"
 module CSR_regfile (
     input                             clk_sys_i,
+    /* verilator lint_off UNUSEDSIGNAL */
     input                             pause_i,
-
+    /* verilator lint_on UNUSEDSIGNAL */
     input                             read_ena_i,
     input       [11:0]                read_addr_i,
     output reg  [`REG_WIDTH-1:0]      read_data_o,
@@ -25,7 +26,7 @@ module CSR_regfile (
 );
     //! CSR寄存器定义
         reg [`REG_WIDTH-1:0] misa             /*verilator public_flat_rd*/   = {2'd2,36'd0,`EXTENSIONS}  ;//? ISA支持                             
-        reg [`REG_WIDTH-1:0] mstatus          /*verilator public_flat_rd*/   = 0                         ;//? 当前状态寄存器             
+        reg [`REG_WIDTH-1:0] mstatus          /*verilator public_flat_rd*/   = {32'd10,32'h0}            ;//? 当前状态寄存器             
         reg [`REG_WIDTH-1:0] mtvec            /*verilator public_flat_rd*/   = 0                         ;//? 陷阱跳转基地址                     
         reg [`REG_WIDTH-1:0] mie              /*verilator public_flat_rd*/   = 0                         ;//? 中断使能                
         reg [`REG_WIDTH-1:0] mcause           /*verilator public_flat_rd*/   = 0                         ;//? 陷阱原因指示              
@@ -133,27 +134,27 @@ module CSR_regfile (
             read_data_o ='b0;
         end
     end
-    //! 脏数据报错
-    always @(posedge clk_sys_i) begin
-        if(read_ena_i)begin
-            case(read_addr_i)
-                `CSR_ADDR_MISA          : begin   if((dirty_misa         ) && (pause_i==0) )$warning("This CSR is dirty!\n"); else dirty_misa          <= 1'b1 ; end
-                `CSR_ADDR_MSTATUS       : begin   if((dirty_mstatus      ) && (pause_i==0) )$warning("This CSR is dirty!\n"); else dirty_mstatus       <= 1'b1 ; end
-                `CSR_ADDR_MTVEC         : begin   if((dirty_mtvec        ) && (pause_i==0) )$warning("This CSR is dirty!\n"); else dirty_mtvec         <= 1'b1 ; end
-                `CSR_ADDR_MIE           : begin   if((dirty_mie          ) && (pause_i==0) )$warning("This CSR is dirty!\n"); else dirty_mie           <= 1'b1 ; end
-                `CSR_ADDR_MCAUSE        : begin   if((dirty_mcause       ) && (pause_i==0) )$warning("This CSR is dirty!\n"); else dirty_mcause        <= 1'b1 ; end
-                `CSR_ADDR_MEPC          : begin   if((dirty_mepc         ) && (pause_i==0) )$warning("This CSR is dirty!\n"); else dirty_mepc          <= 1'b1 ; end
-                `CSR_ADDR_MVTAL         : begin   if((dirty_mvtal        ) && (pause_i==0) )$warning("This CSR is dirty!\n"); else dirty_mvtal         <= 1'b1 ; end
-                `CSR_ADDR_MCOUNTEREN    : begin   if((dirty_mcounteren   ) && (pause_i==0) )$warning("This CSR is dirty!\n"); else dirty_mcounteren    <= 1'b1 ; end
-                `CSR_ADDR_MCOUNTINHIBIT : begin   if((dirty_mcountinhibit) && (pause_i==0) )$warning("This CSR is dirty!\n"); else dirty_mcountinhibit <= 1'b1 ; end
-                `CSR_ADDR_MCYCLE        : begin   if((dirty_mcycle       ) && (pause_i==0) )$warning("This CSR is dirty!\n"); else dirty_mcycle        <= 1'b1 ; end
-                `CSR_ADDR_MINSTRET      : begin   if((dirty_minstret     ) && (pause_i==0) )$warning("This CSR is dirty!\n"); else dirty_minstret      <= 1'b1 ; end
-                `CSR_ADDR_MIP, `CSR_ADDR_MVENDORID, `CSR_ADDR_MARCHID, `CSR_ADDR_MIMPID, `CSR_ADDR_MHARTID :begin
-                end   
-                default: $warning("This CSR is undefined!\n"); 
-            endcase
-        end
-    end
+    // //! 脏数据报错
+    // always @(posedge clk_sys_i) begin
+    //     if(read_ena_i)begin
+    //         case(read_addr_i)
+    //             `CSR_ADDR_MISA          : begin   if((dirty_misa         ) && (pause_i==0) )$warning("This CSR is dirty!\n"); else dirty_misa          <= 1'b1 ; end
+    //             `CSR_ADDR_MSTATUS       : begin   if((dirty_mstatus      ) && (pause_i==0) )$warning("This CSR is dirty!\n"); else dirty_mstatus       <= 1'b1 ; end
+    //             `CSR_ADDR_MTVEC         : begin   if((dirty_mtvec        ) && (pause_i==0) )$warning("This CSR is dirty!\n"); else dirty_mtvec         <= 1'b1 ; end
+    //             `CSR_ADDR_MIE           : begin   if((dirty_mie          ) && (pause_i==0) )$warning("This CSR is dirty!\n"); else dirty_mie           <= 1'b1 ; end
+    //             `CSR_ADDR_MCAUSE        : begin   if((dirty_mcause       ) && (pause_i==0) )$warning("This CSR is dirty!\n"); else dirty_mcause        <= 1'b1 ; end
+    //             `CSR_ADDR_MEPC          : begin   if((dirty_mepc         ) && (pause_i==0) )$warning("This CSR is dirty!\n"); else dirty_mepc          <= 1'b1 ; end
+    //             `CSR_ADDR_MVTAL         : begin   if((dirty_mvtal        ) && (pause_i==0) )$warning("This CSR is dirty!\n"); else dirty_mvtal         <= 1'b1 ; end
+    //             `CSR_ADDR_MCOUNTEREN    : begin   if((dirty_mcounteren   ) && (pause_i==0) )$warning("This CSR is dirty!\n"); else dirty_mcounteren    <= 1'b1 ; end
+    //             `CSR_ADDR_MCOUNTINHIBIT : begin   if((dirty_mcountinhibit) && (pause_i==0) )$warning("This CSR is dirty!\n"); else dirty_mcountinhibit <= 1'b1 ; end
+    //             `CSR_ADDR_MCYCLE        : begin   if((dirty_mcycle       ) && (pause_i==0) )$warning("This CSR is dirty!\n"); else dirty_mcycle        <= 1'b1 ; end
+    //             `CSR_ADDR_MINSTRET      : begin   if((dirty_minstret     ) && (pause_i==0) )$warning("This CSR is dirty!\n"); else dirty_minstret      <= 1'b1 ; end
+    //             `CSR_ADDR_MIP, `CSR_ADDR_MVENDORID, `CSR_ADDR_MARCHID, `CSR_ADDR_MIMPID, `CSR_ADDR_MHARTID :begin
+    //             end   
+    //             default: $warning("This CSR is undefined!\n"); 
+    //         endcase
+    //     end
+    // end
 
 
     assign  mtvec_o   = mtvec;

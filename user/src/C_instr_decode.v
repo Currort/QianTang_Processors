@@ -20,7 +20,7 @@ module C_instr_decode (
     wire [10:0] imm_J        = {instr_i[12], instr_i[8], instr_i[10:9], instr_i[6], instr_i[7], instr_i[2], instr_i[11], instr_i[5:3]};
     wire [11:0] imm_ADDI16SP = {{2{instr_i[12]}}, instr_i[12], instr_i[4:3], instr_i[5], instr_i[2], instr_i[6],4'b0};
     wire [11:0] imm_ADDI4SP  = {2'b0, instr_i[10:7], instr_i[12:11], instr_i[5], instr_i[6], 2'b0};
-    wire [19:0] imm_LUI      = {2'b0, instr_i[12], instr_i[6:2],12'b0};
+    wire [19:0] imm_LUI      = {14'b0, instr_i[12], instr_i[6:2]};
     wire [7:0]  imm_B        = {instr_i[12], instr_i[6:5], instr_i[2], instr_i[11:10], instr_i[4:3]};
     wire [11:0] imm_LW       = {5'b0, instr_i[5], instr_i[12:10], instr_i[6], 2'b0};
     wire [11:0] imm_LD       = {4'b0, instr_i[6], instr_i[5], instr_i[12:10], 3'b0};
@@ -45,7 +45,7 @@ module C_instr_decode (
                     `C_LD      : instr_unfold_o   = {imm_LD, rst1_a, `LD, rst2_a, `ACCESS_I};                               //? LD
                     `C_FSD     : instr_unfold_o   = 0;                             //? FSD           
                     `C_SW      : instr_unfold_o   = {imm_LW[11:5], rst2_a, rst1_a, `SW, imm_LW[4:0], `ACCESS_S};            //? SW    
-                    `C_SD      : instr_unfold_o   = {imm_LD[11:5], rst2_a, rst1_a, `SD, imm_LW[4:0], `ACCESS_S};            //? SD    
+                    `C_SD      : instr_unfold_o   = {imm_LD[11:5], rst2_a, rst1_a, `SD, imm_LD[4:0], `ACCESS_S};            //? SD    
                     default    : instr_unfold_o   = 0;
                 endcase
             end
@@ -74,8 +74,8 @@ module C_instr_decode (
                                 endcase end
                         endcase end
                     `C_J     : instr_unfold_o   = {imm_J[10], imm_J[9:0], imm_J[10], {8{imm_J[10]}}, 5'b0,`JAL};                                      //? JAL
-                    `C_BEQZ  : instr_unfold_o   = {3'b0, imm_B[7:4], 5'b0, rst1_a, `BEQ, imm_B[3:0], 1'b0, `BRANCH_B};            //? BEQZ
-                    `C_BNEZ  : instr_unfold_o   = {3'b0, imm_B[7:4], 5'b0, rst1_a, `BNE, imm_B[3:0], 1'b0, `BRANCH_B};            //? BNEZ
+                    `C_BEQZ  : instr_unfold_o   = { {3{imm_B[7]}}, imm_B[7:4], 5'b0, rst1_a, `BEQ, imm_B[3:0], imm_B[7], `BRANCH_B};            //? BEQZ
+                    `C_BNEZ  : instr_unfold_o   = {{3{imm_B[7]}}, imm_B[7:4], 5'b0, rst1_a, `BNE, imm_B[3:0], imm_B[7], `BRANCH_B};            //? BNEZ
                     default  : instr_unfold_o   = 0;
                 endcase
             end

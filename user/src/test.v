@@ -1,4 +1,4 @@
-module test (
+odule test (
     input clk,
     // input [63:0] a,
     // input [63:0] b,

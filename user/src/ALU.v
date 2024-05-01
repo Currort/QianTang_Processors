@@ -1,10 +1,10 @@
 `include "./include/QianTang_header.v"
-`include "./ALU_submodule/Divider.v"
-`include "./ALU_submodule/Multiplier.v"
+// `include "./ALU_submodule/Divider.v"
+// `include "./ALU_submodule/Multiplier.v"
 
 module ALU(
     input                            clk_sys_i          ,
-
+    input                            rst_sys_i          ,
     input      [`REG_WIDTH-1:0]      rst1_read_i        ,
 
     input      [`REG_WIDTH-1:0]      rst2_read_i        ,
@@ -48,16 +48,27 @@ module ALU(
     //! Write_back前递
         input                            WB_ena_forwarding_i  ,
         input [4:0]                      WB_addr_forwarding_i ,
-        input [`REG_WIDTH-1:0]           WB_data_forwarding_i 
-);
-
+        input [`REG_WIDTH-1:0]           WB_data_forwarding_i ,
+    //! Cache未命中
+        input                            Cache_miss_i,
+        input                            IF_Cache_miss_i,
+        output reg                       ALU_ecall_o,
+        output reg                       ALU_wfi_o
+); 
+    
     wire for_ena /*verilator public_flat_rd*/= ALU_ena_forwarding_o;
     wire [`REG_WIDTH-1:0] result  /*verilator public_flat_rd*/ =result_o;
     wire [4:0] rd      /*verilator public_flat_rd*/ =rd_o;
+
+    
+
 //! 控制信号输入
     wire [3:0] ctrl_opcode;
     wire [2:0] ctrl_funct;
     wire       ctrl_trunc ;
+    reg [3:0] ctrl_opcode_r;
+    reg [2:0] ctrl_funct_r ;
+    reg       ctrl_trunc_r ;
     assign ctrl_opcode = ctrl_i[6:3];
     assign ctrl_funct  = ctrl_i[2:0];
     assign ctrl_trunc  = ctrl_i[7];
@@ -97,7 +108,7 @@ module ALU(
             reg [`REG_WIDTH-1:0]    mul_A;
             reg [`REG_WIDTH-1:0]    mul_B;
             wire [`REG_WIDTH*2-1:0] mul_S;
-            wire                    finish_mul_o=1;
+            wire                    finish_mul_o;
         //! SRT4除法器
             reg                     start_D   = 0;
             reg                     sign_ctrl_r;
@@ -120,6 +131,23 @@ module ALU(
     reg  signed [`REG_WIDTH-1:0] signed_shift_in;
     wire [`REG_WIDTH-1:0] signed_shift_out;
     assign signed_shift_out = signed_shift_in >>> shift_length;
+
+
+
+//! Debug 
+    wire ecall_AL /*verilator public_flat_rd*/ = ALU_ecall_o;
+    reg  [`REG_WIDTH-1:0] pc_r;
+    reg  [`REG_WIDTH-1:0] pc_rr;
+    always @(posedge clk_sys_i) begin
+        pc_r <=pc_i;
+        if(pause_o) pc_rr <= pc_rr;
+        else        pc_rr <= pc_r;
+    end
+    wire [`REG_WIDTH-1:0] rst1_read_AL /*verilator public_flat_rd*/ = rst1_pre;
+    wire [`REG_WIDTH-1:0] rst2_read_AL /*verilator public_flat_rd*/ = rst2_pre;
+    wire [`REG_WIDTH-1:0] pc           /*verilator public_flat_rd*/ = pc_r;
+
+
 
 //! 实现逻辑
     //! 组合逻辑
@@ -352,21 +380,26 @@ module ALU(
     end
     //! 时序逻辑
     always @(posedge clk_sys_i) begin
-        if(start==1)begin
+        if(rst_sys_i) begin
+            ALU_ecall_o <= 0;
+            ALU_wfi_o   <= 0;
+        end
+        else if(start==1)begin
             if (finish_o) begin
                 start_M  <= 0 ;
                 start_D  <= 0 ;
-                case(ctrl_opcode)
+                ALU_ena_forwarding_o <= 1'b1;
+                case(ctrl_opcode_r)
                     `CTRL_ARITHMETIC_R_10:begin
-                        case(ctrl_funct)
-                            `MUL     :result_o   <=(ctrl_trunc)?{{32{mul_S[`REG_WIDTH/2-1]}},mul_S[`REG_WIDTH/2-1:0]}: mul_S[`REG_WIDTH-1:0];
+                        case(ctrl_funct_r)
+                            `MUL     :result_o   <=(ctrl_trunc_r)?{{32{mul_S[`REG_WIDTH/2-1]}},mul_S[`REG_WIDTH/2-1:0]}: mul_S[`REG_WIDTH-1:0];
                             `MULH    :result_o   <= mul_S[`REG_WIDTH*2-1:`REG_WIDTH];
                             `MULHSU  :result_o   <= mul_S[`REG_WIDTH*2-1:`REG_WIDTH];
                             `MULHU   :result_o   <= mul_S[`REG_WIDTH*2-1:`REG_WIDTH];
-                            `DIV     :result_o   <=(ctrl_trunc)?{{32{q_o[`REG_WIDTH/2-1]}},q_o[`REG_WIDTH/2-1:0]}: q_o;
-                            `DIVU    :result_o   <=(ctrl_trunc)?{{32{q_o[`REG_WIDTH/2-1]}},q_o[`REG_WIDTH/2-1:0]}: q_o;
-                            `REM     :result_o   <=(ctrl_trunc)?{{32{rem_o[`REG_WIDTH/2-1]}},rem_o[`REG_WIDTH/2-1:0]}: rem_o;
-                            `REMU    :result_o   <=(ctrl_trunc)?{{32{rem_o[`REG_WIDTH/2-1]}},rem_o[`REG_WIDTH/2-1:0]}: rem_o;
+                            `DIV     :result_o   <=(ctrl_trunc_r)?{{32{q_o[`REG_WIDTH/2-1]}},q_o[`REG_WIDTH/2-1:0]}: q_o;
+                            `DIVU    :result_o   <=(ctrl_trunc_r)?{{32{q_o[`REG_WIDTH/2-1]}},q_o[`REG_WIDTH/2-1:0]}: q_o;
+                            `REM     :result_o   <=(ctrl_trunc_r)?{{32{rem_o[`REG_WIDTH/2-1]}},rem_o[`REG_WIDTH/2-1:0]}: rem_o;
+                            `REMU    :result_o   <=(ctrl_trunc_r)?{{32{rem_o[`REG_WIDTH/2-1]}},rem_o[`REG_WIDTH/2-1:0]}: rem_o;
                             default  :begin
                             end
                         endcase
@@ -375,11 +408,14 @@ module ALU(
                     end
                 endcase
             end
+        end else if (IF_Cache_miss_i)begin
         end else if( jump_o || (flush_cnt != 'b0)) begin  //! 冲刷2级流水线
-            if(jump_o)begin
+            if(jump_o )begin
                 jump_o <= 0;
-                flush_cnt <= 2'd2;
+                flush_cnt <= 2'd1;
             end else flush_cnt <= flush_cnt-1;
+        end else if(Cache_miss_i)begin
+        end else if(ALU_ecall_o)   begin 
         end else begin
             rd_o     <= rd_i        ;
             ctrl_o   <= ctrl_i      ;
@@ -433,6 +469,10 @@ module ALU(
                 `CTRL_ARITHMETIC_R_10:begin //! 乘、除、取余 
                     jump_o <= 0;
                     ALU_ena_forwarding_o <= 1'b0;
+                    ctrl_funct_r <= ctrl_funct;
+                    ctrl_trunc_r <= ctrl_trunc;
+                    ctrl_opcode_r <= ctrl_opcode;
+
                     case (ctrl_funct)
                         `MUL        :begin //! 乘法
                             start_M  <= 1 ;
@@ -461,23 +501,23 @@ module ALU(
                         end `DIV    :begin //! 除法
                             start_D  <= 1 ;
                             sign_ctrl_r     <= 1;
-                            div_r           <= rst1_pre;
-                            divd_r          <= rst2_pre;
+                            divd_r          <= rst1_pre;
+                            div_r           <= rst2_pre;
                         end `DIVU   :begin //! 无符号除法
                             start_D  <= 1 ;
                             sign_ctrl_r     <= 0;
-                            div_r           <= (ctrl_trunc)?{{32{1'b0}},rst1_pre[`REG_WIDTH/2-1:0]} :rst1_pre;
-                            divd_r          <= (ctrl_trunc)?{{32{1'b0}},rst2_pre[`REG_WIDTH/2-1:0]} :rst2_pre;
+                            divd_r          <= (ctrl_trunc)?{{32{1'b0}},rst1_pre[`REG_WIDTH/2-1:0]} :rst1_pre;
+                            div_r           <= (ctrl_trunc)?{{32{1'b0}},rst2_pre[`REG_WIDTH/2-1:0]} :rst2_pre;
                         end `REM    :begin //! 求余数
                             start_D  <= 1 ;
                             sign_ctrl_r     <= 1;
-                            div_r           <= rst1_pre;
-                            divd_r          <= rst2_pre;
+                            divd_r          <= rst1_pre;
+                            div_r           <= rst2_pre;
                         end `REMU   :begin //! 无符号求余数
                             start_D  <= 1 ;
                             sign_ctrl_r     <= 0;
-                            div_r           <= (ctrl_trunc)?{{32{1'b0}},rst1_pre[`REG_WIDTH/2-1:0]} :rst1_pre;
-                            divd_r          <= (ctrl_trunc)?{{32{1'b0}},rst2_pre[`REG_WIDTH/2-1:0]} :rst2_pre;
+                            divd_r          <= (ctrl_trunc)?{{32{1'b0}},rst1_pre[`REG_WIDTH/2-1:0]} :rst1_pre;
+                            div_r           <= (ctrl_trunc)?{{32{1'b0}},rst2_pre[`REG_WIDTH/2-1:0]} :rst2_pre;
                         end
                         default :begin
                         end
@@ -582,7 +622,7 @@ module ALU(
                         end
                         `CSRRC  : begin
                             csr_write_addr_o <= csr_write_addr_i;
-                            csr_write_data_o <= (rst1_pre & csr_read_data_i);
+                            csr_write_data_o <= (~rst1_pre & csr_read_data_i);
                             result_o   <= csr_read_data_i ;
                         end
                         `CSRRWI : begin
@@ -597,7 +637,7 @@ module ALU(
                         end
                         `CSRRCI : begin
                             csr_write_addr_o <= csr_write_addr_i;
-                            csr_write_data_o <= (imm_pre & csr_read_data_i);
+                            csr_write_data_o <= (~imm_pre & csr_read_data_i);
                             result_o   <= csr_read_data_i ;
                         end 
                         default :begin
@@ -625,6 +665,12 @@ module ALU(
                     jump_o      <= 0 ;
                     ALU_ena_forwarding_o <= 1'b1;
                     result_o    <=  pc_w;
+                end
+                `CTRL_ECALL              :begin //! ecall pc停止
+                    ALU_ecall_o <=1;
+                end
+                `CTRL_WFI                :begin
+                    ALU_wfi_o   <=1;
                 end
                 default:begin
                 end
@@ -656,6 +702,9 @@ module ALU(
     );
     /* verilator lint_off PINMISSING */
     Multiplier u_Multiplier(
+        .clk_i          (clk_sys_i),
+        .start_i (start_M),
+        .finish_o(finish_mul_o),
         .A             	( mul_A           ),
         .B             	( mul_B           ),
         .unsign_ctrl_A_i( unsign_ctrl_A_r ),

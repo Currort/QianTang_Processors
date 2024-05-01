@@ -9,10 +9,12 @@
             `define REG_WIDTH 32
         `endif
     //! 内存相关
-        `define RAM_INSTRUCTION_SIZE 16         //todo 支持16位指令内存寻址，可以按需更改
-        `define RAM_DATA_SIZE        20         //todo 支持32位数据内存寻址，可以按需更改
-        `define RAM_ADDR_START       'h00000012 //todo 内存起始地址
+        `define RAM_INSTRUCTION_SIZE 16         //todo 支持20位指令内存寻址，可以按需更改
+        `define RAM_DATA_SIZE        16         //todo 支持32位数据内存寻址，可以按需更改
+        `define RAM_ADDR_START       'h00002016 //todo 内存起始地址
         `define MEM_INIT_OF_TEST     1
+        `define PRINT_ADDR           'H0000a018 //todo print 外设内存起始地址
+        `define PRINT_DEPTH          'H40
 
     //! R_TYPE
         `define ARITHMETIC_R    7'b0110011
@@ -57,6 +59,7 @@
     `define CTRL_JALR            4'b1100
     `define CTRL_EXCEPTION       4'b1101
     `define CTRL_ECALL           4'b1110
+    `define CTRL_WFI             4'b1111
     // `define CTRL_NOP             4'b1110
 
     //! R_TYPE 指令集
@@ -286,9 +289,9 @@
     //! MTIME 时钟频率
     `define MTIME_FREQUENCY 'd50_000_000
     //! MMIO地址
-    `define MMIO_MTIME     `RAM_DATA_SIZE'h00008000
-    `define MMIO_MTIMECMP  `RAM_DATA_SIZE'h00008004
-    `define MMIO_MSIP      `RAM_DATA_SIZE'h00008008
+    `define MMIO_MTIME     `RAM_DATA_SIZE'h00000100
+    `define MMIO_MTIMECMP  `RAM_DATA_SIZE'h00000108
+    `define MMIO_MSIP      `RAM_DATA_SIZE'h000001A0
 
 
     //! 模块测试

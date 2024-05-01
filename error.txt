@@ -1,0 +1,18 @@
+%Error: Cannot find file containing module: SOC.v
+        ... Looked in:
+             ALU_submodule/SOC.v
+             ALU_submodule/SOC.v.v
+             ALU_submodule/SOC.v.sv
+             Library/SOC.v
+             Library/SOC.v.v
+             Library/SOC.v.sv
+             Trap_submodule/SOC.v
+             Trap_submodule/SOC.v.v
+             Trap_submodule/SOC.v.sv
+             SOC.v
+             SOC.v.v
+             SOC.v.sv
+             obj_dir/SOC.v
+             obj_dir/SOC.v.v
+             obj_dir/SOC.v.sv
+%Error: Exiting due to 1 error(s)

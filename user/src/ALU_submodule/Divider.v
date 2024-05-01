@@ -27,6 +27,9 @@ module Divider #(
     //     clk_i = 0;
     //     forever #0.25 clk_i = ~clk_i;
     // end
+
+
+
 //! SRT算法验证
 `ifdef DIVIDER_TEST
     initial begin
@@ -224,7 +227,7 @@ module Divider #(
         wire [WIDTH+5:0] div_2n =-2*div_scale;
     //! QDS及部分余数生成    
         wire  [4:0] 	         quot_pro;
-        reg   [WIDTH+5:0]       div_pro;
+        wire   [WIDTH+5:0]       div_pro;
         wire  [2:0]             div_trunc;
         wire  [6:0]             w_trunc;    
         assign div_trunc = div_scale[WIDTH+1:WIDTH-1];
@@ -269,8 +272,8 @@ module Divider #(
     //! 商飞速转换
         reg  [WIDTH-1:0] on_the_fly_A ;
         reg  [WIDTH-1:0] on_the_fly_B ;
-        reg  [WIDTH-1:0]  q_A ;
-        reg  [WIDTH-1:0]  q_B ;
+        wire  [WIDTH-1:0]  q_A ;
+        wire  [WIDTH-1:0]  q_B ;
         wire [WIDTH-1:0]  on_the_fly_next_A ;
         wire [WIDTH-1:0]  on_the_fly_next_B ;
         reg  [6:0]       q_cnt;
@@ -316,13 +319,12 @@ module Divider #(
         assign w_pro   = {w_pro_1,w_pro_0};
     //! 捕捉 start_i 上升沿
         (* ASYNC_REG = "TRUE" *)
-        reg 	start_sync1, start_sync2;
+        reg 	start_sync1;
         wire  	start_up;
         always @(posedge clk_i) begin 
             start_sync1 <= start_i; 
-            start_sync2 <= start_sync1;
         end
-        assign start_up    = ( start_sync1 & ~start_sync2);
+        assign start_up    = ( ~start_sync1 & start_i);
     //! 迭代
    
         reg [WIDTH-1:0] rem_end;
@@ -374,30 +376,30 @@ module Divider #(
     assign q_o   =(sign_ctrl_i&&(div_i[WIDTH-1]^divd_i[WIDTH-1]))   ? -q_end  :  q_end;
     assign rem_o =(sign_ctrl_i&&(rem_end[WIDTH-1]^divd_i[WIDTH-1])) ? -rem_end:rem_end;
     assign finish_o = (start_up)? 0:finish_r ;
-    //! RTL验证
-    generate
-    wire signed [63:0] div_i_sign    =div_i;
-    wire signed [63:0] divd_i_sign   =divd_i;
-    wire [63:0] quot_std;
-    wire [63:0] rem_std;
-    assign quot_std = divd_i / div_i;
-    assign rem_std  = divd_i -  quot_std * div_i;
-    wire [63:0] quot_std_sign;
-    wire [63:0] rem_std_sign;
-    assign quot_std_sign = divd_i_sign / div_i_sign;
-    assign rem_std_sign  = divd_i_sign -  quot_std_sign * div_i_sign;
-    always @(posedge clk_i) begin
-        if((q_o!=quot_std || rem_o!=rem_std)&&
-          (finish_o==1)&&(sign_ctrl_i==0))begin
-            $warning("RTL unsign_error time:%d",$time);
-            $finish;
-          end else if((q_o!=quot_std_sign || rem_o!=rem_std_sign)&&
-          (finish_o==1)&&(sign_ctrl_i==1))begin
-            $warning("RTL sign_error time:%d",$time);
-            $finish;
-        end
-    end
-    endgenerate
+    // //! RTL验证
+    // generate   
+    // wire signed [63:0] div_i_sign    =div_i;
+    // wire signed [63:0] divd_i_sign   =divd_i;
+    // wire [63:0] quot_std;
+    // wire [63:0] rem_std;
+    // assign quot_std = divd_i / div_i;
+    // assign rem_std  = divd_i -  quot_std * div_i;
+    // wire [63:0] quot_std_sign;
+    // wire [63:0] rem_std_sign;
+    // assign quot_std_sign = divd_i_sign / div_i_sign;
+    // assign rem_std_sign  = divd_i_sign -  quot_std_sign * div_i_sign;
+    // always @(posedge clk_i) begin
+    //     if((q_o!=quot_std || rem_o!=rem_std)&&
+    //       (finish_o==1)&&(sign_ctrl_i==0))begin
+    //         $warning("RTL unsign_error time:%d",$time);
+    //         $finish;
+    //       end else if((q_o!=quot_std_sign || rem_o!=rem_std_sign)&&
+    //       (finish_o==1)&&(sign_ctrl_i==1))begin
+    //         $warning("RTL sign_error time:%d",$time);
+    //         $finish;
+    //     end
+    // end
+    // endgenerate
 
 endmodule //Divider
 

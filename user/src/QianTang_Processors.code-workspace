@@ -3,10 +3,6 @@
 		{
 			"name": "QianTang_Processors",
 			"path": "../.."
-		},
-		{
-			"name": "Spike_difftest",
-			"path": "../../../Spike_difftest"
 		}
 	],
 	"settings": {
@@ -14,6 +10,8 @@
 			"*.json": "jsonc",
 			"riscv-reg.h": "c",
 			"htif.h": "c"
-		}
+		},
+		"digital-ide.welcome.show": false,
+		"digital-ide.function.lsp.linter.vlog.diagnostor": "vivado"
 	}
 }

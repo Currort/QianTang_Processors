@@ -1,7 +1,7 @@
 //! 该模块实现了指令译码，支持 RV64GC 指令集 ()
 //! 未优化方案：通过预译码减少 选择器电路 翻转
 `include "include/QianTang_header.v"
-`include "./C_instr_decode.v"
+// `include "./C_instr_decode.v"
 module ID(
     input                                   clk_sys_i            ,
     input                                   pause_i              ,
@@ -24,7 +24,8 @@ module ID(
     output  reg [11:0]                      csr_write_addr_o     ,
     output  reg [`REG_WIDTH-1:0]            csr_read_data_o      ,
     output  reg [4:0]                       forwarding_rst1_addr_o      ,
-    output  reg [4:0]                       forwarding_rst2_addr_o      
+    output  reg [4:0]                       forwarding_rst2_addr_o      ,
+    input                                   Cache_miss_i
     );
 //! ctrl_o 由 是否截断 + (opcode + func7类型总数编码) + func3  组成 
     //! R--操作寄存器: ARITHMETIC_R(0000000、0000001、0100000)  共 4 类
@@ -57,7 +58,7 @@ module ID(
     wire [`REG_WIDTH-1:0] imm_CSR = {{(`REG_WIDTH- 5){1'b0}}, instr[19:15]};
     assign instr_c    = instr_i[15:0];
     assign instr_pre  = (instr_i[1:0]==2'b11) ? instr_i : instr_unfold;
-    assign instr      = (pause_i) ? instr_r : instr_pre ;
+    assign instr      = (pause_i|Cache_miss_i) ? instr_r : instr_pre ;
 
     assign rst1_addr_o=rst1;
     assign rst2_addr_o=rst2;
@@ -66,10 +67,9 @@ module ID(
     assign csr_read_addr_o = instr[31:20] ;
 
     always @(posedge clk_sys_i) begin
-        instr_r <= (pause_i) ? instr_r : instr_pre;
+        instr_r <= (pause_i|Cache_miss_i) ? instr_r : instr_pre;
     end
 
-    reg [1:0] jump_cnt;
 
     //? debug vpi抓取信号 
         wire [31:0]            instr_ID              /*verilator public_flat_rd*/   =  instr       ;
@@ -91,13 +91,9 @@ module ID(
     always @(posedge clk_sys_i) begin
         csr_write_ena_o  <= csr_read_ena_o  ;
         csr_write_addr_o <= csr_read_addr_o ;
-        pc_o        <= ((instr_c[15:12] == 4'b1001)&&(instr_c[6:0] == 7'b0000010)) ? pc_i-2 : pc_i;
+        pc_o        <= (pause_i|Cache_miss_i) ? pc_o : ((instr_c[15:12] == 4'b1001)&&(instr_c[6:0] == 7'b0000010)) ? pc_i-2 : pc_i;
         forwarding_rst1_addr_o <= rst1_addr_o;
         forwarding_rst2_addr_o <= rst2_addr_o;
-        case (opcode)
-            `BRANCH_B,`JAL,`JALR: jump_cnt <= 2'd2;
-            default: jump_cnt <= jump_cnt-1;
-        endcase
         case (opcode)
             `ARITHMETIC_R: begin 
                 rst1_read_o     <= rst1_i;
@@ -169,6 +165,7 @@ module ID(
                 ctrl_o[2:0] <= funct3;
                 if(funct3 != `NON_CSR) ctrl_o[6:3] <= `CTRL_EXCEPTION;
                 else if (funct_e == 0) ctrl_o[6:3] <= `CTRL_ECALL;
+                else if (funct_e == 12'h105) ctrl_o[6:3] <= `CTRL_WFI;
                 else $warning("undefined instruction !  opencode : EXCEPTION  ");
                 ctrl_o[7] <= 0;
             end
@@ -205,7 +202,7 @@ module ID(
                 ctrl_o[6:3] <= `CTRL_ARITHMETIC_I_0;
                 ctrl_o[7] <= 0;
             end
-            default: if(jump_cnt==0)$warning("undefined instruction ! opencode : %7H",opcode);
+            default: $warning("undefined instruction ! opencode : %7b",opcode);
         endcase
     end
 

@@ -1,0 +1,28 @@
+{
+    "head":{
+        "text":["tspan", {"class":"h1"}, "Cache write and read after miss and dirty "],
+    },
+    "signal": [
+        { "name": "clk_sys_i",    "wave": "P......." },
+        { "name": "CACHE_ena_i",  "wave": "01......" },
+        { "name": "CACHE_addr_i", "wave": "x5......", "data":["MEM_addr_o"] },
+        { "name": "CACHE_data_o", "wave": "x.....5.", "data":["block_memory_data"]},
+        ["ctrl",
+            { "name": "dirty",  "wave": "x1......" },
+            { "name": "miss_o",       "wave": "01....0." },
+            { "name": "direct_read",  "wave": "0......." },
+        ],
+        { "name": "c_state",      "wave": "3.44883.", "data":["DISABLE","WRITE","WRITE_DELAY","READ","READ_DELAY","DISABLE"]},
+        { "name": "n_state",      "wave": "344883..", "data":["DISABLE","WRITE","WRITE_DELAY","READ","READ_DELAY","DISABLE"]},
+        { "name": "SRAM_ena_o ",  "wave": "0.1....." },
+        { "name": "SRAM_wea_o ",  "wave": "0.1.0..." },
+        { "name": "SRAM_addr_o", "wave": "x.6.5.x.", "data":["Cache_addr_o","MEM_addr_o" ]},
+        { "name": "SRAM_data_o", "wave": "x.6.x...", "data":["Cache_data_o"] },
+        { "name": "SRAM_data_i", "wave": "x....5.x", "data":["block_memory_data"] },
+        { "name": "SRAM_data_r", "wave": "x..6xxxx", "data":["Cache_data_o"] },
+
+    ],
+    "config": { 
+        "hscale": 3 
+    },
+}

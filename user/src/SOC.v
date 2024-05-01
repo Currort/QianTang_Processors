@@ -1,14 +1,45 @@
 `include "include/QianTang_header.v"
 module SOC (
     input clk_sys_i,
-	input rst_sys_i
+	input rst_sys_i,
+
+	// input           clk_ILA_i,
+    input           print_ps_finish_i,
+	input   [5:0]   print_ps_data_addr_i,
+
+	output          ecall_o  ,
+	output          wfi_o    ,
+    output        	print_ps_en_o,
+    output [31:0] 	print_ps_data_o
 );
-//todo jump流水线冲刷
+    localparam  SETS_BIT           = 1             ;
+    localparam  TAG_BIT            = 10            ;
+    localparam  INDEX_BIT          = 2             ;
+    localparam  OFFSET_BIT         = 4             ;
+    localparam  IF_CACHE_DATA_BIT  = 32;
+    localparam  MEM_CACHE_DATA_BIT = `REG_WIDTH;
+    localparam  SRAM_DATA_BIT      = 128      ; 
+    localparam  SRAM_ADDR_BIT      = `RAM_DATA_SIZE - $clog2(SRAM_DATA_BIT/8);
+	localparam  PRINT_REG_NUMBER   = 16;
+
+
+assign ecall_o = ALU_ecall_o;
+assign wfi_o = ALU_wfi_o;
 // outports wire
 wire [31:0] 	        IF_instr_o;
 wire [`REG_WIDTH-1:0] 	IF_pc_o;
+wire IF_Cache_miss_o;
 
-IF IF(
+
+
+IF #(
+	.SETS_BIT      (SETS_BIT    ),
+	.TAG_BIT       (TAG_BIT     ),
+	.INDEX_BIT     (INDEX_BIT   ),
+	.OFFSET_BIT    (OFFSET_BIT  ),
+	.CACHE_DATA_BIT(IF_CACHE_DATA_BIT ),
+	.SRAM_DATA_BIT (SRAM_DATA_BIT)
+) IF(
 	.rst_i       	    ( rst_sys_i      ),
 	.clk_sys_i   	    ( clk_sys_i      ),
 	.pause_i     	    ( ALU_pause_o    ),
@@ -19,7 +50,15 @@ IF IF(
 	.trap_exit_i      	( trap_exit_o    ),
 	.trap_exit_addr_i 	( mepc_o 		 ),
 	.instr_o     		( IF_instr_o     ),
-	.pc_o     	    	( IF_pc_o        )
+	.pc_o     	    	( IF_pc_o        ),
+	.Cache_miss_i       (CACHE_miss_o),
+	.ecall_i            ( ALU_ecall_o ),
+	.IF_Cache_miss_o    (IF_Cache_miss_o),
+	.SRAM_ena_o 		  ( IF_SRAM_ena_o ),
+	.SRAM_wea_o 		  ( IF_SRAM_wea_o ),
+	.SRAM_addr_o		  ( IF_SRAM_addr_o),
+	.SRAM_data_o		  ( IF_SRAM_data_o),
+	.SRAM_data_i		  ( IF_SRAM_data_i)
 );
 
 
@@ -62,7 +101,9 @@ ID ID(
 	.csr_write_ena_o ( ID_csr_write_ena_o  ),
 	.csr_write_addr_o( ID_csr_write_addr_o ),
 	.forwarding_rst1_addr_o ( ID_forwarding_rst1_addr_o ),
-	.forwarding_rst2_addr_o ( ID_forwarding_rst2_addr_o )
+	.forwarding_rst2_addr_o ( ID_forwarding_rst2_addr_o ),
+	.Cache_miss_i (CACHE_miss_o |IF_Cache_miss_o)
+
 );
 
 // outports wire
@@ -94,8 +135,11 @@ wire                  	ALU_csr_write_ena_o ;
 wire [11:0]           	ALU_csr_write_addr_o;
 wire [`REG_WIDTH-1:0] 	ALU_csr_write_data_o;
 wire 					ALU_ena_forwarding_o;
+wire                    ALU_ecall_o;
+wire                    ALU_wfi_o;
 ALU ALU(
 	.clk_sys_i   	  		( clk_sys_i   	    ),
+	.rst_sys_i              ( rst_sys_i         ),
 	.rst1_read_i 	  		( ID_rst1_read_o      ),
 	.rst2_read_i 	  		( ID_rst2_read_o      ),
 	.imm_i       	  		( ID_imm_o            ),
@@ -130,7 +174,11 @@ ALU ALU(
 	.WB_data_forwarding_i   ( WB_data_forwarding_o ),
 	.LD_ena_forwarding_i    ( LD_ena_forwarding_o ),
 	.LD_addr_forwarding_i   ( ALU_rd_o ),
-	.LD_data_forwarding_i   ( LD_data_forwarding_o )
+	.LD_data_forwarding_i   ( LD_data_forwarding_o ),
+	.Cache_miss_i (CACHE_miss_o),
+	.IF_Cache_miss_i(IF_Cache_miss_o),
+	.ALU_ecall_o  (ALU_ecall_o),
+	.ALU_wfi_o    (ALU_wfi_o)
 );
 
 // outports wire
@@ -142,7 +190,20 @@ wire                    MEM_time_intr_o;
 wire 					MEM_ena_forwarding_o;
 wire                    LD_ena_forwarding_o;
 wire  [`REG_WIDTH-1:0]  LD_data_forwarding_o ;
-Memory MEM(
+wire  [31:0]            MEM_Print_data_o;
+wire                    MEM_Print_start_o;
+wire                    CACHE_miss_o;
+wire print_hit;
+Memory #(
+	.SETS_BIT      (SETS_BIT    ),
+	.TAG_BIT       (TAG_BIT     ),
+	.INDEX_BIT     (INDEX_BIT   ),
+	.OFFSET_BIT    (OFFSET_BIT  ),
+	.CACHE_DATA_BIT(MEM_CACHE_DATA_BIT ),
+	.SRAM_DATA_BIT (SRAM_DATA_BIT),
+	.REG_NUMBER    (PRINT_REG_NUMBER)
+) MEM(
+	.print_hit            (print_hit),
 	.clk_sys_i 			  ( clk_sys_i 		     ),
 	.ctrl_i    			  ( ALU_ctrl_o     	     ),
 	.rd_i      			  ( ALU_rd_o       	     ),
@@ -156,8 +217,69 @@ Memory MEM(
 	.ALU_ena_forwarding_i ( ALU_ena_forwarding_o ),
 	.MEM_ena_forwarding_o ( MEM_ena_forwarding_o ),
 	.LD_ena_forwarding_o  ( LD_ena_forwarding_o ),
-	.LD_data_forwarding_o ( LD_data_forwarding_o )
+	.LD_data_forwarding_o ( LD_data_forwarding_o ),
+	.Print_data_addr_i    ( print_data_addr_o ),
+	.MEM_Print_data_o     ( MEM_Print_data_o ),
+
+	.MEM_Print_start_o    ( MEM_Print_start_o ),
+	.Print_finish_i       ( print_finish_o),
+	.CACHE_miss_o         ( CACHE_miss_o ),
+	
+	.SRAM_ena_o 		  ( MEM_SRAM_ena_o ),
+	.SRAM_wea_o 		  ( MEM_SRAM_wea_o ),
+	.SRAM_addr_o		  ( MEM_SRAM_addr_o),
+	.SRAM_data_o		  ( MEM_SRAM_data_o),
+	.SRAM_data_i		  ( MEM_SRAM_data_i)
 );
+
+wire                            IF_SRAM_ena_o ;
+wire                            IF_SRAM_wea_o ;
+wire [SRAM_ADDR_BIT-1:0]        IF_SRAM_addr_o;
+wire [SRAM_DATA_BIT-1:0]        IF_SRAM_data_o;
+wire [SRAM_DATA_BIT-1:0]        IF_SRAM_data_i;
+
+wire                     		MEM_SRAM_ena_o ;
+wire                     		MEM_SRAM_wea_o ;
+wire [SRAM_ADDR_BIT-1:0]        MEM_SRAM_addr_o;
+wire [SRAM_DATA_BIT-1:0]        MEM_SRAM_data_o;
+wire [SRAM_DATA_BIT-1:0]        MEM_SRAM_data_i;
+
+// SRAM_test #(
+// 	.SRAM_DATA_BIT(SRAM_DATA_BIT),
+// 	.SRAM_ADDR_BIT(SRAM_ADDR_BIT)
+// ) u_SRAM_test(
+// 	.clk_sys_i          ( clk_sys_i    ),
+// 	.IF_SRAM_ena_i  	( IF_SRAM_ena_o   ),
+// 	.IF_SRAM_wea_i  	( IF_SRAM_wea_o   ),
+// 	.IF_SRAM_addr_i 	( IF_SRAM_addr_o  ),
+// 	.IF_SRAM_data_i 	( IF_SRAM_data_o  ),
+// 	.IF_SRAM_data_o 	( IF_SRAM_data_i  ),
+// 	.MEM_SRAM_ena_i  	( MEM_SRAM_ena_o   ),
+// 	.MEM_SRAM_wea_i  	( MEM_SRAM_wea_o   ),
+// 	.MEM_SRAM_addr_i 	( MEM_SRAM_addr_o  ),
+// 	.MEM_SRAM_data_i 	( MEM_SRAM_data_o  ),
+// 	.MEM_SRAM_data_o 	( MEM_SRAM_data_i  )
+// );
+
+
+
+block_memory u_block_memory (
+  	.clka           (clk_sys_i),    
+  	.ena            (MEM_SRAM_ena_o ),   
+  	.wea            (MEM_SRAM_wea_o ),   
+  	.addra          (MEM_SRAM_addr_o),  
+  	.dina           (MEM_SRAM_data_o),  
+  	.douta          (MEM_SRAM_data_i),  
+  	.clkb           (clk_sys_i),    
+  	.enb            (IF_SRAM_ena_o ),     
+  	.web            (IF_SRAM_wea_o ),     
+  	.addrb          (IF_SRAM_addr_o),   
+  	.dinb           (IF_SRAM_data_o),    
+  	.doutb          (IF_SRAM_data_i)    
+);
+
+
+
 
 
 // outports wire
@@ -179,6 +301,7 @@ Write_back WB(
 	.WB_ena_forwarding_o  (WB_ena_forwarding_o ),
 	.WB_addr_forwarding_o (WB_addr_forwarding_o),
 	.WB_data_forwarding_o (WB_data_forwarding_o)
+	// .Cache_miss_i (CACHE_miss_o)
 );
 
 // outports wire
@@ -208,9 +331,53 @@ CSR_regfile CSR_regfile(
 );
 
 
+	wire [$clog2(PRINT_REG_NUMBER)+1:0]      print_data_addr_o;
+	wire            print_finish_o;
+    Print_sub #(
+		.REG_NUMBER         (PRINT_REG_NUMBER)
+	) u_Print_sub(
+        .clk_sys_i      	( clk_sys_i       ),
+        .finish_i       	( print_ps_finish_i),
+        .finish_o       	( print_finish_o  ),
+
+        .write_soc_en_i 	( MEM_Print_start_o  ),
+        .write_ps_en_o  	( print_ps_en_o   ),
+
+        .data_addr_i    	( print_ps_data_addr_i),
+        .data_i         	( MEM_Print_data_o ),
+        .data_addr_o    	( print_data_addr_o),
+        .data_o         	( print_ps_data_o )
+    );
+
+    // wire [$clog2(16)+1:0] print_ps_data_addr_i;
+    // wire print_ps_finish_i;
+	// /* verilator lint_off UNUSEDSIGNAL */
+	// wire test_finish;
+	// /* verilator lint_on UNUSEDSIGNAL */
+	// uart_test u_uart_test(
+	// 	.clk_sys_i        	( clk_sys_i         ),
+	// 	.uart_start_i     	( print_ps_en_o     ),
+	// 	.uart_finish_o    	( print_ps_finish_i ),
+	// 	.uart_data_i      	( print_ps_data_o   ),
+	// 	.uart_data_addr_o 	( print_ps_data_addr_i  ),
+	// 	.test_finish        ( test_finish )
+	// );
+
+
+	// ILA u_ILA (
+	// 	.clk(clk_ILA_i), // input wire clk
+	// 	.probe0(print_hit), // input wire [0:0]  probe0  
+	// 	.probe1(IF_pc_o[15:0]), // input wire [15:0]  probe1 
+	// 	.probe2(print_ps_en_o), // input wire [0:0]  probe2 
+	// 	.probe3(print_finish_o), // input wire [0:0]  probe3 
+	// 	.probe4(print_ps_data_o), // input wire [0:0]  probe4
+	// 	.probe5(print_data_addr_o),
+	// 	.probe6(ALU_result_o[31:0]),
+	// 	.probe7(ALU_save_data_o[31:0])
+	// );
 
 
 
-
-
+	/* verilator lint_off WIDTHEXPAND */
+	/* verilator lint_off WIDTHTRUNC */
 endmodule //SOC

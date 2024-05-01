@@ -14,6 +14,7 @@ module RegFile(
 
 
     );
+    integer i;
     reg [`REG_WIDTH-1:0] rst [31:0] ;
 
     wire [`REG_WIDTH-1:0] zero  /*verilator public_flat_rd*/ =rst[0];
@@ -54,7 +55,10 @@ module RegFile(
 
     always @(posedge clk_sys_i) begin
         if(rst_i) begin //? 模拟spike中 pk程序加载后初始值
-            rst[2] <= 64'h0000003ffffffb20;
+            for(i = 0; i < 32 ; i = i+1) begin
+                if (i==2) rst[2] <= 64'h0000003ffffffb20;
+                else      rst[i] <= 0;
+            end
             // rst[3] <= 64'h000000000009012;
         end
         else if (rd_addr_i == 0) ;

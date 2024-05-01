@@ -6,6 +6,18 @@
 	"soc": {
 		"core": "none"
 	},
+	"arch" : {
+        "prjPath": "",
+        "hardware" : {
+            "src"  : "",  // 放置设计源文件，注: src上一级为IP&bd
+            "sim"  : "",  // 放置仿真文件，会直接反应在树状结构上
+            "data" : ""   // 放置约束、数据文件，约束会自动添加进vivado工程
+        },
+        "software" : {
+            "src"  : "",
+            "data" : ""
+        }
+    },
 	"enableShowLog": false,
 	"device": "xc7z020clg400-2"
 }
