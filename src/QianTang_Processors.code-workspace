@@ -1,0 +1,17 @@
+{
+	"folders": [
+		{
+			"name": "QianTang_Processors",
+			"path": "../.."
+		}
+	],
+	"settings": {
+		"files.associations": {
+			"*.json": "jsonc",
+			"riscv-reg.h": "c",
+			"htif.h": "c"
+		},
+		"digital-ide.welcome.show": false,
+		"digital-ide.function.lsp.linter.vlog.diagnostor": "vivado"
+	}
+}

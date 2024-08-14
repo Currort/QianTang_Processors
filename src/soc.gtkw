@@ -1,0 +1,62 @@
+[*]
+[*] GTKWave Analyzer v3.3.114 (w)1999-2023 BSI
+[*] Mon Nov 27 14:01:34 2023
+[*]
+[dumpfile] "/home/zero/master_share/QianTang_Processors/user/src/waveform.vcd"
+[dumpfile_mtime] "Mon Nov 27 13:51:46 2023"
+[dumpfile_size] 234877
+[savefile] "/home/zero/master_share/QianTang_Processors/user/src/soc.gtkw"
+[timestart] 18
+[size] 3840 2032
+[pos] -1 -1
+*0.000000 21 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[treeopen] TOP.
+[treeopen] TOP.SOC.
+[sst_width] 380
+[signals_width] 1013
+[sst_expanded] 1
+[sst_vpaned_height] 618
+@22
+TOP.SOC.IF_instr_o[31:0]
+TOP.SOC.IF_pc_o[63:0]
+@28
+TOP.SOC.ID_ctrl_o[7:0]
+@420
+TOP.SOC.ID_imm_o[63:0]
+@24
+TOP.SOC.ID_pc_o[63:0]
+TOP.SOC.ID_rd_o[4:0]
+TOP.SOC.ID_rst1_addr_o[4:0]
+@420
+TOP.SOC.ID_rst1_read_o[63:0]
+@24
+TOP.SOC.ID_rst2_addr_o[4:0]
+@420
+TOP.SOC.ID_rst2_read_o[63:0]
+@28
+TOP.clk_sys_i
+TOP.rst_i
+TOP.SOC.ALU_ena_forwarding_o
+TOP.SOC.ALU_ctrl_o[7:0]
+TOP.SOC.ALU_jump_o
+TOP.SOC.ALU_pause_o
+@24
+TOP.SOC.ALU_rd_o[4:0]
+@420
+TOP.SOC.ALU_result_o[63:0]
+TOP.SOC.ALU_save_data_o[63:0]
+@28
+TOP.SOC.MEM_ena_forwarding_o
+TOP.SOC.MEM_ctrl_o[7:0]
+@24
+TOP.SOC.MEM_rd_o[4:0]
+@420
+TOP.SOC.MEM_result_o[63:0]
+@28
+TOP.SOC.WB_rd_wen_o
+@24
+TOP.SOC.WB_rd_o[4:0]
+@421
+TOP.SOC.WB_result_o[63:0]
+[pattern_trace] 1
+[pattern_trace] 0

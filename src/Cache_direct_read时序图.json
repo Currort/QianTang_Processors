@@ -1,0 +1,26 @@
+{
+    "head":{
+        "text":["tspan", {"class":"h1"}, "Cache direct read after miss "],
+        "every":2,
+    },
+    "signal": [
+        { "name": "clk_sys_i",    "wave": "P......." },
+        { "name": "CACHE_ena_i",  "wave": "01......" },
+        { "name": "CACHE_addr_i", "wave": "x6......", "data":["MEM_addr_o"] },
+        { "name": "CACHE_data_o", "wave": "xx..7...", "data":["block_memory_data"]},
+        ["ctrl",
+            { "name": "dirty",  "wave": "x0....." },
+            { "name": "miss_o",       "wave": "01..0..." },
+            { "name": "direct_read",  "wave": "01..0..." },
+        ],
+        { "name": "c_state",      "wave": "3.453...", "data":["DISABLE","READ","READ_DEALY","DISABLE"]},
+        { "name": "n_state",      "wave": "3453....", "data":["DISABLE","READ","READ_DEALY","DISABLE"]},
+        { "name": "SRAM_ena_o ",       "wave": "0.1....." },
+        { "name": "SRAM_wea_o ",       "wave": "0......." },
+        { "name": "SRAM_addr_o", "wave": "x.6.....", "data":["MEM_addr_o"] },
+        { "name": "SRAM_data_i", "wave": "xx.7....", "data":["block_memory_data"] },
+    ],
+    "config": { 
+        "hscale": 3 
+    },
+}
